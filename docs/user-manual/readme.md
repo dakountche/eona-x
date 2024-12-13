@@ -66,16 +66,16 @@ As of today, the connector supports both APIs using basic auth and oauth2.
 
 Please find in the table below the supported `dataAddress` codesets:
 
-|           | Name                     | Description                                                                                                                                                                                                                                                                                                  | Mandatory | Default value |
+| Category  | Name                     | Description                                                                                                                                                                                                                                                                                                  | Mandatory | Default value |
 |-----------|--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|---------------|
 | Common    | `baseUrl`                | Url of the API serving the data                                                                                                                                                                                                                                                                              | yes       |               |
 |           | `path`                   | Path to be appended to the baseUrl                                                                                                                                                                                                                                                                           | no        |               |
 |           | `queryParams`            | Query params to be appended to the baseUrl                                                                                                                                                                                                                                                                   | no        |               |
 |           | `proxyPath`              | Enable the proxying of path parameters provided by the consumer when request the data                                                                                                                                                                                                                        |           | false         |
 |           | `proxyQueryParams`       | Enable the proxying of query parameters provided by the consumer when request the data                                                                                                                                                                                                                       |           | false         |
-|           | `header:*`               | Defines headers to be sent when targeting the api, e.g. this "header:foo":"bar" will tell the  connector to send the header "foo" with value "bar" when targeting the api. There is no limit on the number of headers that can be provided                                                                   |           |               |
-| Base auth | `authKey`                | Name of header in which api key will be sent (e.g. Authorization, x-api-key...)                                                                                                                                                                                                                              | no        |               |
-|           | `authCode`               | The api key to authenticate to the api. Using this approach is strongly discouraged as  it means the api key will be stored in the database. Instead we recommend to use the secretName codeset                                                                                                              | no        |               |
+|           | `header:*`               | Defines headers to be sent when targeting the api, e.g. this `"header:foo":"bar"` will tell the  connector to send the header "foo" with value "bar" when targeting the api. There is no limit on the number of headers that can be provided                                                                 |           |               |
+| Base auth | `authKey`                | Name of header in which api key will be sent (e.g. `Authorization`, `x-api-key`...)                                                                                                                                                                                                                          | no        |               |
+|           | `authCode`               | The api key to authenticate to the api. Using this approach is strongly discouraged as  it means the api key will be stored in the database. Instead we recommend to use the `secretName` codeset                                                                                                            | no        |               |
 |           | `secretName`             | Alias of the secret stored in the vault that contains the api key                                                                                                                                                                                                                                            |           |               |
 | Oauth2    | `oauth2:tokenUrl`        | Url of the oauth2 server                                                                                                                                                                                                                                                                                     | yes       |               |
 |           | `oauth2:clientId`        | Oauth2 client id                                                                                                                                                                                                                                                                                             | yes       |               |
@@ -144,20 +144,24 @@ If the request is successful, then a code 200 will be returned along with a body
 
 ### Create policy
 
+A policy is basically expressing a list of constraints that must be fulfilled by another participant in order to be
+able to negotiate access to a given dataset.
+
 #### Url
 
 ```bash
 <CONNECTOR_URL>/cp/mgmt/v3/policydefinitions (POST)
 ```
 
-#### Request body for policy limiting access to Eona-X participants (i.e. all entities having a `MembershipCredential`)
+#### Example of request body
 
 ```json
 {
   "@context": {
-    "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
+    "@vocab": "https://w3id.org/edc/v0.0.1/ns/",
+    "eox-policy": "https://w3id.org/eonax/policy/"
   },
-  "@id": "eonax-members-only",
+  "@id": "membership-policy",
   "@type": "PolicyDefinitionDto",
   "policy": {
     "@context": "http://www.w3.org/ns/odrl.jsonld",
@@ -167,7 +171,7 @@ If the request is successful, then a code 200 will be returned along with a body
         "action": "use",
         "constraint": {
           "@type": "Constraint",
-          "leftOperand": "MembershipCredential",
+          "leftOperand": "eox-policy:Membership",
           "operator": "odrl:eq",
           "rightOperand": "active"
         }
@@ -177,91 +181,91 @@ If the request is successful, then a code 200 will be returned along with a body
 }
 ```
 
-#### Request body for policy limiting access to Eona-X participants and for a period of 365 days after contract signature
+All constraints defined in the `permission` field must be fulfilled by the other participant in order to get access.
+
+In the above example, there is one constraint defined in the policy, whose left operand is `eox-policy:Membership`. This
+left operand uses the `eox-policy` namespace, wherein the Eona-X specific policies are defined. The table below sums up
+the currently available constraints (both in the Eona-X namesapce and in the EDC-native one).
+
+| leftOperand syntax                                            | Supported operators                                                   | Supported rightOperand                                                                              | Description | Example                                                                                                                        |
+|---------------------------------------------------------------|-----------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|-------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `eox-policy:Membership`                                       | `odrl:eq`                                                             | `active`                                                                                            |             | [membership.json](./policy_examples/membership.json)                                                                           |
+| `eox-policy:GenericClaim.$.[CREDENTIAL_TYPE].[PATH_TO_FIELD]` | `odrl:eq`, `odrl:neq`, `odrl:isPartOf`                                | array of strings if operator is `odrl:isPartOf`, a string otherwise                                 |             | [fixed_time.json](./policy_examples/inforcedate_fixed_time.json), [duration.json](./policy_examples/inforcedate_duration.json) |
+| `edc:inForceDate`                                             | `odrl:eq`, `odrl:neq`, `odrl:gt`, `odrl:gteq`, `odrl:lt`, `odrl:lteq` | fixed time in ISO-8061 UTC or duration expressed in seconds `s`, minutes `s`, hours `h` or days `d` |             | [generic_claim.json](./policy_examples/generic_claim.json)                                                                     |
+
+The `eox-policy:GenericClaim` constraint has a particular syntax, as it enables to evaluate any claim from the consumer
+VC. It is composed of three parts:
+
+- the `eox-policy:GenericClaim` prefix,
+- the type of VC on which the constraint applies. e.g. `Membership`,
+- the path of the field that is evaluated. If the target field is in a nested structure, then `.` is used as separator (
+  see example below).
+
+Let's use a concrete example: at the time of writing this document, the Eona-X membership credential is as follows:
 
 ```json
 {
-  "@context": {
-    "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
-  },
-  "@id": "eonax-members-only-365d",
-  "@type": "PolicyDefinitionDto",
-  "policy": {
-    "@context": "http://www.w3.org/ns/odrl.jsonld",
-    "@type": "http://www.w3.org/ns/odrl/2/Set",
-    "permission": [
-      {
-        "action": "use",
-        "constraint": {
-          "@type": "Constraint",
-          "leftOperand": "MembershipCredential",
-          "operator": "odrl:eq",
-          "rightOperand": "active"
-        }
-      },
-      {
-        "action": "use",
-        "constraint": {
-          "@type": "Constraint",
-          "leftOperand": "https://w3id.org/edc/v0.0.1/ns/inForceDate",
-          "operator": "lteq",
-          "rightOperand": "contractAgreement+365d"
-        }
-      }
-    ]
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2"
+  ],
+  "id": "23b792b6-30a5-4699-9c80-dba9ec97a1cf",
+  "type": [
+    "VerifiableCredential",
+    "https://w3id.org/eonax/credentials/MembershipCredential"
+  ],
+  "issuer": "did:web:eonax.com",
+  "issuanceDate": "2024-12-13T12:45:20.633598100Z",
+  "credentialSubject": {
+    "id": "did:web:eonaxtest.com",
+    "name": "eonaxtest",
+    "membership": {
+      "membershipType": "FullMember",
+      "since": "2023-01-01T00:00:00Z"
+    }
   }
 }
 ```
 
-Note that the contract validity duration can be expressed in days `d`, hours `h`, minutes `m` or seconds `s`.
+The only relevant claim in this membership credential as of now is the `name` field, which is different for every
+participant (a list of the current Eona-X participant names can be found at the end of this documentation).
 
-#### Request body for policy limiting access to participant with id `eonaxtest` and before the 25 déc. 2024.
+The `eox-policy:GenericClaim` constraint applies on the claim from the `credentialSubject`, thus if we want to express a
+constraint that restricts access to participant which are `FullMember`, then we will use the following policy:
 
 ```json
 {
-  "@context": {
-    "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
-  },
-  "@id": "eonax-members-only-365d",
-  "@type": "PolicyDefinitionDto",
-  "policy": {
-    "@context": "http://www.w3.org/ns/odrl.jsonld",
-    "@type": "http://www.w3.org/ns/odrl/2/Set",
-    "permission": [
-      {
-        "action": "use",
-        "constraint": {
-          "@type": "Constraint",
-          "leftOperand": "MembershipCredential",
-          "operator": "odrl:eq",
-          "rightOperand": "active"
-        }
-      },
-      {
-        "action": "use",
-        "constraint": {
-          "@type": "Constraint",
-          "leftOperand": "https://w3id.org/edc/v0.0.1/ns/inForceDate",
-          "operator": "lteq",
-          "rightOperand": "2024-12-25T00:00:01Z"
-        }
-      },
-      {
-        "action": "use",
-        "constraint": {
-          "@type": "Constraint",
-          "leftOperand": "GenericClaim.$.name",
-          "operator": "eq",
-          "rightOperand": "eonaxtest"
-        }
-      }
+  "action": "use",
+  "constraint": {
+    "@type": "Constraint",
+    "leftOperand": "eox-policy:GenericClaim.$.MembershipCredential.membership.membershipType",
+    "operator": "odrl:eq",
+    "rightOperand": "FullMember"
+  }
+}
+```
+
+In the same manner, if we want to restrict the usage to, for example, participants `eonaxtest` and `amadeus`, then the
+following expression will be used:
+
+```json
+{
+  "action": "use",
+  "constraint": {
+    "@type": "Constraint",
+    "leftOperand": "eox-policy:GenericClaim.$.MembershipCredential.name",
+    "operator": "odrl:isPartOf",
+    "rightOperand": [
+      "eonaxtest",
+      "amadeus"
     ]
   }
 }
 ```
 
-The limit contract validity date is expressed in ISO-8061 UTC. Please refer to the appendix section for the known
-participant ids
+> NOTE
+: When using at least one Eona-X type of policy, take care of adding the `eox-policy` namespace in the `@Context` (see
+above example)
+> in order for the connector to know how to properly perform the JSON-LD expansion of the `leftOperand`.
 
 #### Response
 
@@ -283,6 +287,17 @@ If the request is successful, then a code 200 will be returned along with a body
 
 ### Create contract definition
 
+The contract definition is basically a dataset with its associated policies. Each contract definition points to a
+dataset and two policies:
+
+- an `accessPolicy` which defines the non-public requirements for accessing a dataset governed by a contract. These
+  requirements are therefore not advertised to the agent. For example, access control policy may require an agent to be
+  in a business partner tier.
+- a `contractPolicy` which defines the requirements governing use a participant must follow when accessing the data.
+  This policy is advertised to agents as part of a contract and are visible in the catalog.
+
+Both policies must be fulfilled by a participant in order to get access to the given contract definition.
+
 #### Url
 
 ```bash
@@ -297,8 +312,8 @@ If the request is successful, then a code 200 will be returned along with a body
     "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
   },
   "@type": "https://w3id.org/edc/v0.0.1/ns/ContractDefinition",
-  "accessPolicyId": "eonax-members-only",
-  "contractPolicyId": "eonax-members-only",
+  "accessPolicyId": "my-access-policy-id",
+  "contractPolicyId": "my-contract-policy-id",
   "assetsSelector": [
     {
       "@type": "Criterion",
@@ -669,10 +684,10 @@ proxying of query/path parameters for this dataset), e.g. `<CONNECTOR_URL>/dp/da
 
 ## Appendix
 
-### Eona-X participants ids as of 17 OCT 2024
+### Eona-X participants ids as of 13 DEC 2024
 
 | Participant name                                                    | ID                        |
-|---------------------------------------------------------------------|---------------------------|
+---------------------------------------------------------------------|---------------------------|
 | Aeroport de Paris                                                   | aeroportdeparis           |
 | Apidae                                                              | apidae                    |
 | Amadeus                                                             | amadeus                   |
@@ -681,3 +696,6 @@ proxying of query/path parameters for this dataset), e.g. `<CONNECTOR_URL>/dp/da
 | Renault                                                             | renault                   |
 | SNCF                                                                | sncf                      |
 | Aeroport Marseille Provence                                         | aeroportmarseilleprovence |
+| Le Petit Fute                                                       | petitfute                 |
+| Atout France                                                        | atoutfrance               |
+| Metropole De Nice                                                   | metropoledenice           |
