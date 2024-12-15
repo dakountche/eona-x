@@ -1,0 +1,9 @@
+{
+  "action": "use",
+  "constraint": {
+    "@type": "Constraint",
+    "leftOperand": "eox-policy:GenericClaim.$.MembershipCredential.name",
+    "operator": "odrl:eq",
+    "rightOperand": "eonaxtest"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "action": "use",
+  "constraint": {
+    "@type": "Constraint",
+    "leftOperand": "edc:inForceDate",
+    "operator": "odrl:lteq",
+    "rightOperand": "contractAgreement+365d"
+  }
+}

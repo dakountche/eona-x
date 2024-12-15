@@ -1,0 +1,9 @@
+{
+  "action": "use",
+  "constraint": {
+    "@type": "Constraint",
+    "leftOperand": "eox-policy:Membership",
+    "operator": "odrl:eq",
+    "rightOperand": "active"
+  }
+}
