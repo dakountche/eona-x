@@ -50,15 +50,18 @@ edc.vault.hashicorp.token.scheduled-renew-enabled=false
           "endpoints" : [
             {
               "port" : 8181,
-              "path" : "/ih/(identity)(.*)"
+              "path" : "/ih/(identity)(.*)",
+              "pathType": "ImplementationSpecific"
             },
             {
               "port" : 8282,
-              "path" : "/ih/(resolution)(.*)"
+              "path" : "/ih/(resolution)(.*)",
+              "pathType": "ImplementationSpecific"
             },
             {
               "port" : 8383,
-              "path" : "/ih/(did)(.*)"
+              "path" : "/ih/(did)(.*)",
+              "pathType": "ImplementationSpecific"
             }
           ]
         },

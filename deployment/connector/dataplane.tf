@@ -51,11 +51,13 @@ edc.dataplane.state-machine.iteration-wait-millis=${var.data_plane_state_machine
           "endpoints" : [
             {
               "port" : 8181,
-              "path" : "/dp/(public)(.*)"
+              "path" : "/dp/(public)(.*)",
+              "pathType": "ImplementationSpecific"
             },
             {
               "port" : 8282,
-              "path" : "/dp/(data)(.*)"
+              "path" : "/dp/(data)(.*)",
+              "pathType": "ImplementationSpecific"
             }
           ]
         },

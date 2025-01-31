@@ -85,7 +85,7 @@ done
 ### Download SQL files
 
 ```bash
-jq -r   --arg version "$EDC_VERSION" '.files[] | "https://raw.githubusercontent.com/eclipse-edc/\(.repo)/v\($version)/\(.path)/src/main/resources/\(.file_name)"' sql.json | \
+jq -r   --arg version "$EDC_VERSION" '.files[] | "https://raw.githubusercontent.com/eclipse-edc/\(.repo)/refs/heads/main\($version)/\(.path)/src/main/resources/\(.file_name)"' sql.json | \
 tr -d '\r' | \
 while read -r url; do curl -o "./connector/sql/$(basename "$url")"  "$url"; done
 ```

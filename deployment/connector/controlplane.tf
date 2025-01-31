@@ -61,11 +61,13 @@ edc.policy.monitor.state-machine.iteration-wait-millis=${var.policy_monitor_stat
           "endpoints" : [
             {
               "port" : 8181,
-              "path" : "/cp/(management)(.*)"
+              "path" : "/cp/(management)(.*)",
+              "pathType": "ImplementationSpecific"
             },
             {
               "port" : 8282,
-              "path" : "/cp/(dsp)(.*)"
+              "path" : "/cp/(dsp)(.*)",
+              "pathType": "ImplementationSpecific"
             }
           ]
         },
