@@ -17,7 +17,3 @@ variable "db_server_fqdn" {
 variable "postgres_admin_credentials_secret_name" {
   description = "(Required) Secret containing the DB Admin credentials"
 }
-
-variable "db_bootstrap_sql_script_configmap_name" {
-  description = "(Required) Name of the ConfigMap containing the DB bootstrap script"
-}

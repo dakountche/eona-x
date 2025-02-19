@@ -156,3 +156,13 @@ resource "kubernetes_service" "db-service" {
     }
   }
 }
+
+module "db" {
+  source = "./db-bootstrap"
+
+  db_name                                = var.db_name
+  db_server_fqdn                         = kubernetes_service.db-service.metadata[0].name
+  db_user                                = var.db_username
+  db_user_password                       = var.db_password
+  postgres_admin_credentials_secret_name = kubernetes_secret.db-admin-credentials.metadata.0.name
+}

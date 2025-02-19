@@ -18,6 +18,12 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: 'Setup Terraform'
+        uses: hashicorp/setup-terraform@v3.1.1
+        with:
+          terraform_version: 1.6.0
+          terraform_wrapper: false
+
       - name: 'Check Terraform files are properly formatted (run "terraform fmt -recursive" to fix)'
         run: |
           terraform fmt -recursive

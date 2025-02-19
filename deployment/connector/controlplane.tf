@@ -62,12 +62,12 @@ edc.policy.monitor.state-machine.iteration-wait-millis=${var.policy_monitor_stat
             {
               "port" : 8181,
               "path" : "/cp/(management)(.*)",
-              "pathType": "ImplementationSpecific"
+              "pathType" : "ImplementationSpecific"
             },
             {
               "port" : 8282,
               "path" : "/cp/(dsp)(.*)",
-              "pathType": "ImplementationSpecific"
+              "pathType" : "ImplementationSpecific"
             }
           ]
         },
@@ -75,7 +75,7 @@ edc.policy.monitor.state-machine.iteration-wait-millis=${var.policy_monitor_stat
           "jdbcUrl" : "jdbc:postgresql://${var.db_server_fqdn}/${var.db_name}",
           "credentials" : {
             "secret" : {
-              "name" : kubernetes_secret.db-user-credentials.metadata.0.name
+              "name" : var.db_credentials_secret_name
             }
           }
         },
@@ -92,6 +92,4 @@ edc.policy.monitor.state-machine.iteration-wait-millis=${var.policy_monitor_stat
       }
     })
   ]
-
-  depends_on = [module.db]
 }
