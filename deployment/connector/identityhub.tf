@@ -35,7 +35,7 @@ edc.vault.hashicorp.token.scheduled-renew-enabled=false
           "jdbcUrl" : "jdbc:postgresql://${var.db_server_fqdn}/${var.db_name}",
           "credentials" : {
             "secret" : {
-              "name" : kubernetes_secret.db-user-credentials.metadata.0.name
+              "name" : var.db_credentials_secret_name
             }
           }
         },
@@ -51,17 +51,17 @@ edc.vault.hashicorp.token.scheduled-renew-enabled=false
             {
               "port" : 8181,
               "path" : "/ih/(identity)(.*)",
-              "pathType": "ImplementationSpecific"
+              "pathType" : "ImplementationSpecific"
             },
             {
               "port" : 8282,
-              "path" : "/ih/(resolution)(.*)",
-              "pathType": "ImplementationSpecific"
+              "path" : "/ih/(presentation)(.*)",
+              "pathType" : "ImplementationSpecific"
             },
             {
               "port" : 8383,
               "path" : "/ih/(did)(.*)",
-              "pathType": "ImplementationSpecific"
+              "pathType" : "ImplementationSpecific"
             }
           ]
         },
@@ -88,6 +88,4 @@ edc.vault.hashicorp.token.scheduled-renew-enabled=false
 
     })
   ]
-
-  depends_on = [module.db]
 }

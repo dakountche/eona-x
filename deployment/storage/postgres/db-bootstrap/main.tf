@@ -1,6 +1,6 @@
-######################################
-## CREATE DB, USER AND BOOTSTRAP DB ##
-######################################
+#####################
+## CREATE DB, USER ##
+#####################
 
 resource "kubernetes_config_map" "db-init-script" {
 
@@ -84,20 +84,8 @@ resource "kubernetes_job_v1" "db-init" {
           }
 
           volume_mount {
-            mount_path = "/db/sql"
-            name       = "db-bootstrap-sql-script"
-          }
-
-          volume_mount {
             mount_path = "/db/scripts"
             name       = "db-init-script"
-          }
-        }
-
-        volume {
-          name = "db-bootstrap-sql-script"
-          config_map {
-            name = var.db_bootstrap_sql_script_configmap_name
           }
         }
 
@@ -114,4 +102,16 @@ resource "kubernetes_job_v1" "db-init" {
     backoff_limit = 4
   }
   wait_for_completion = true
+}
+
+resource "kubernetes_secret" "db-user-credentials" {
+
+  metadata {
+    name = var.db_name
+  }
+
+  data = {
+    "username" = var.db_user
+    "password" = var.db_user_password
+  }
 }

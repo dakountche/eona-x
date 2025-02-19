@@ -1,7 +1,7 @@
 locals {
   vault_token = "root"
   vault_port  = 8200
-  vault_image = "vault:1.13.3"
+  vault_image = "hashicorp/vault:1.17.2"
 }
 
 resource "kubernetes_stateful_set" "vault" {

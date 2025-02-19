@@ -19,6 +19,14 @@ resource "helm_release" "dataplane" {
           "tag" : "latest"
           "pullPolicy" : "Never"
         },
+
+        "did" : {
+          "web" : {
+            "url" : var.identity_hub_did_web_url,
+            "useHttps" : false
+          }
+        },
+
         "keys" : {
           // use the same key pair for simplicity
           "dataplane" : {
@@ -52,12 +60,12 @@ edc.dataplane.state-machine.iteration-wait-millis=${var.data_plane_state_machine
             {
               "port" : 8181,
               "path" : "/dp/(public)(.*)",
-              "pathType": "ImplementationSpecific"
+              "pathType" : "ImplementationSpecific"
             },
             {
               "port" : 8282,
               "path" : "/dp/(data)(.*)",
-              "pathType": "ImplementationSpecific"
+              "pathType" : "ImplementationSpecific"
             }
           ]
         },
@@ -74,7 +82,7 @@ edc.dataplane.state-machine.iteration-wait-millis=${var.data_plane_state_machine
           "jdbcUrl" : "jdbc:postgresql://${var.db_server_fqdn}/${var.db_name}",
           "credentials" : {
             "secret" : {
-              "name" : kubernetes_secret.db-user-credentials.metadata.0.name
+              "name" : var.db_credentials_secret_name
             }
           }
         },
@@ -92,5 +100,5 @@ edc.dataplane.state-machine.iteration-wait-millis=${var.data_plane_state_machine
     })
   ]
 
-  depends_on = [module.db, helm_release.controlplane]
+  depends_on = [helm_release.controlplane]
 }

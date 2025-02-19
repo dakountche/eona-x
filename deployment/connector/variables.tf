@@ -3,11 +3,6 @@ variable "kube_context" {
   default     = "kind-eonax-cluster"
 }
 
-variable "postgres_admin_credentials_secret_name" {
-  description = "(Optional) Secret containing the DB Admin credentials"
-  default     = "postgresql"
-}
-
 variable "control_plane_dsp_url" {
   description = "(Required) Internet facing URL of the Control Plane DSP api"
 }
@@ -35,14 +30,9 @@ variable "db_name" {
   default     = "connectordb"
 }
 
-variable "db_username" {
-  description = "(Optional) DB username"
-  default     = "connector"
-}
-
-variable "db_password" {
-  description = "(Optional) DB password"
-  default     = "connectorpwd"
+variable "db_credentials_secret_name" {
+  description = "(Optional) Name of the secret containing the DB credentials"
+  default     = "connectordb"
 }
 
 variable "vault_token_secret_name" {

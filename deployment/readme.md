@@ -45,8 +45,7 @@ cd connector
 ### Specify the Eona-X/EDC version
 
 ```bash
-EDC_VERSION=0.9.1
-EONAX_VERSION=0.2.2
+EONAX_VERSION=0.4.0
 ```
 
 ### Login to the Docker registry
@@ -82,22 +81,14 @@ for i in control-plane data-plane identity-hub; do \
 done
 ```
 
-### Download SQL files
-
-```bash
-jq -r   --arg version "$EDC_VERSION" '.files[] | "https://raw.githubusercontent.com/eclipse-edc/\(.repo)/refs/heads/main\($version)/\(.path)/src/main/resources/\(.file_name)"' sql.json | \
-tr -d '\r' | \
-while read -r url; do curl -o "./connector/sql/$(basename "$url")"  "$url"; done
-```
-
 ## Routes to be exposed over the internet
 
 4 routes must imperatively be exposed over the internet, as they are used for communication with the other connectors:
 
-- the Control Plane DSP url (port 8282 of the control plane)
-- the Data Plane public url (port 8181 of the data plane)
-- the Identity Hub presentation url (port 8282 of the identity hub)
-- the DID document (port 8383 of the identity hub)
+- the **Control Plane DSP url** (port 8282 of the control plane)
+- the **Data Plane public url** (port 8181 of the data plane)
+- the **Identity Hub presentation url** (port 8282 of the identity hub)
+- the **DID document url ** (port 8383 of the identity hub)
 
 We strongly recommend to expose these routes through a web application firewall and implements rate limiting.
 
@@ -107,7 +98,7 @@ deployment topology as the ones provided below are only relevant for a local dep
 ```bash
 DID_WEB=did:web:localhost:ih:did
 DID_WEB_BASE64_URL=$(echo -n "$DID_WEB" | base64 | tr '+/' '-_' | tr -d '=')
-IH_RESOLUTION_URL=http://localhost/ih/resolution
+IH_PRESENTATION_URL=http://localhost/ih/presentation
 CP_DSP_URL=http://localhost/cp/dsp
 DP_PUBLIC_URL=http://localhost/dp/public
 ```
@@ -159,7 +150,7 @@ curl -X POST -H "Content-Type: application/json" -d "$(cat <<EOF
     {
       "id": "credential-service-url",
       "type": "CredentialService",
-      "serviceEndpoint": "$IH_RESOLUTION_URL/v1/participants/$DID_WEB_BASE64_URL"
+      "serviceEndpoint": "$IH_PRESENTATION_URL/v1/participants/$DID_WEB_BASE64_URL"
     },
     {
       "id": "dsp-url",
