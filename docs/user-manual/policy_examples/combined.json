@@ -1,0 +1,53 @@
+{
+    "odrl:action": {
+        "@id": "odrl:use"
+    },
+    "odrl:constraint": {
+        "odrl:or": [
+            {
+                "odrl:and": [
+                    {
+                        "odrl:leftOperand": {
+                            "@id": "eox-policy:GenericClaim.$.MembershipCredential.name"
+                        },
+                        "odrl:operator": {
+                            "@id": "odrl:eq"
+                        },
+                        "odrl:rightOperand": "amadeus"
+                    },
+                    {
+                        "odrl:leftOperand": {
+                            "@id": "eox-policy:Membership"
+                        },
+                        "odrl:operator": {
+                            "@id": "odrl:eq"
+                        },
+                        "odrl:rightOperand": "active"
+                    }
+                ]
+            },
+            {
+                "odrl:and": [
+                    {
+                        "odrl:leftOperand": {
+                            "@id": "eox-policy:GenericClaim.$.MembershipCredential.name"
+                        },
+                        "odrl:operator": {
+                            "@id": "odrl:eq"
+                        },
+                        "odrl:rightOperand": "sncf"
+                    },
+                    {
+                        "odrl:leftOperand": {
+                            "@id": "eox-policy:Membership"
+                        },
+                        "odrl:operator": {
+                            "@id": "odrl:eq"
+                        },
+                        "odrl:rightOperand": "active"
+                    }
+                ]
+            }
+        ]
+    }
+}

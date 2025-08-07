@@ -186,13 +186,13 @@ All constraints defined in the `permission` field must be fulfilled by the other
 
 In the above example, there is one constraint defined in the policy, whose left operand is `eox-policy:Membership`. This
 left operand uses the `eox-policy` namespace, wherein the Eona-X specific policies are defined. The table below sums up
-the currently available constraints (both in the Eona-X namesapce and in the EDC-native one).
+the currently available constraints (both in the Eona-X namespace and in the EDC-native one).
 
 | leftOperand syntax                                            | Supported operators                                                   | Supported rightOperand                                                                              | Description | Example                                                                                                                        |
 |---------------------------------------------------------------|-----------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|-------------|--------------------------------------------------------------------------------------------------------------------------------|
 | `eox-policy:Membership`                                       | `odrl:eq`                                                             | `active`                                                                                            |             | [membership.json](./policy_examples/membership.json)                                                                           |
 | `eox-policy:GenericClaim.$.[CREDENTIAL_TYPE].[PATH_TO_FIELD]` | `odrl:eq`, `odrl:neq`, `odrl:isPartOf`                                | array of strings if operator is `odrl:isPartOf`, a string otherwise                                 |             | [generic_claim.json](./policy_examples/generic_claim.json)                                                                     |
-| `edc:inForceDate`                                             | `odrl:eq`, `odrl:neq`, `odrl:gt`, `odrl:gteq`, `odrl:lt`, `odrl:lteq` | fixed time in ISO-8061 UTC or duration expressed in seconds `s`, minutes `m`, hours `h` or days `d` |             | [fixed_time.json](./policy_examples/inforcedate_fixed_time.json), [duration.json](./policy_examples/inforcedate_duration.json) |
+| `edc:inForceDate`                                             | `odrl:eq`, `odrl:neq`, `odrl:gt`, `odrl:gteq`, `odrl:lt`, `odrl:lteq` | fixed time in ISO-8061 UTC or duration expressed in seconds `s`, minutes `m`, hours `h` or days `d` |             | [fixed_time.json](./deprecated_review/inforcedate_fixed_time.json), [duration.json](./deprecated_review/inforcedate_duration.json) |
 
 The `eox-policy:GenericClaim` constraint has a particular syntax, as it enables to evaluate any claim from the consumer
 VC. It is composed of three parts:
@@ -245,28 +245,15 @@ constraint that restricts access to participant which are `FullMember`, then we 
 }
 ```
 
-In the same manner, if we want to restrict the usage to, for example, participants `eonaxtest` and `amadeus`, then the
-following expression will be used:
+In the same manner, if we want to restrict the usage to, for example, participants `amadeus` and `sncf` that have active memberships we can find it [here](./policy_examples/combined.json)
 
-```json
-{
-  "action": "use",
-  "constraint": {
-    "@type": "Constraint",
-    "leftOperand": "eox-policy:GenericClaim.$.MembershipCredential.name",
-    "operator": "odrl:isPartOf",
-    "rightOperand": [
-      "eonaxtest",
-      "amadeus"
-    ]
-  }
-}
-```
+
 
 > NOTE
 : When using at least one Eona-X type of policy, take care of adding the `eox-policy` namespace in the `@Context` (see
 above example)
 > in order for the connector to know how to properly perform the JSON-LD expansion of the `leftOperand`.
+
 
 #### Response
 
