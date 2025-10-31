@@ -163,48 +163,26 @@ EOF
 )" http://localhost/ih/identity/v1alpha/participants
 ```
 
-#### Add membership VC to the Identity Hub
+#### To receive EONAX membership VC
 
-Add the membership VC into your Identity Hub (do not forget to replace the request body with the VC provided by
-Amadeus):
+Contact EONAX to request for membership VC. 
+
+Once when you get a confirmation that VC was created, call the below API to retrieve the VC.
 
 ```bash
 curl -X POST -H "Content-Type: application/json" -d "$(cat <<EOF
 {
-  "participantId": "$DID_WEB",
-  "verifiableCredentialContainer": {
-    "rawVc": "eyJraWQiOiJkaWQ6d2ViOmF1dGhvcml0eS1pZGVudGl0eWh1YiUzQTgzODM6YXBpOmRpZCNteS1rZXkiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJkaWQ6d2ViOmF1dGhvcml0eS1pZGVudGl0eWh1YiUzQTgzODM6YXBpOmRpZCIsInN1YiI6ImRpZDp3ZWI6cHJvdmlkZXItaWRlbnRpdHlodWIlM0E4MzgzOmFwaTpkaWQiLCJ2YyI6eyJjcmVkZW50aWFsU3ViamVjdCI6W3siaWQiOiJkaWQ6d2ViOnByb3ZpZGVyLWlkZW50aXR5aHViJTNBODM4MzphcGk6ZGlkIiwibmFtZSI6InByb3ZpZGVyIiwibWVtYmVyc2hpcCI6eyJtZW1iZXJzaGlwVHlwZSI6IkZ1bGxNZW1iZXIiLCJzaW5jZSI6IjIwMjMtMDEtMDFUMDA6MDA6MDBaIn19XSwiaWQiOiIzMTkxNWJjOC0wODhjLTQwZDYtYTAxNC03YTk4YmNkNzBiY2IiLCJ0eXBlIjpbIlZlcmlmaWFibGVDcmVkZW50aWFsIiwiTWVtYmVyc2hpcENyZWRlbnRpYWwiXSwiaXNzdWVyIjp7ImlkIjoiZGlkOndlYjphdXRob3JpdHktaWRlbnRpdHlodWIlM0E4MzgzOmFwaTpkaWQiLCJhZGRpdGlvbmFsUHJvcGVydGllcyI6e319LCJpc3N1YW5jZURhdGUiOiIyMDI0LTA4LTE0VDE0OjMzOjQwWiIsImV4cGlyYXRpb25EYXRlIjpudWxsLCJjcmVkZW50aWFsU3RhdHVzIjpbXSwiZGVzY3JpcHRpb24iOm51bGwsIm5hbWUiOm51bGx9LCJpYXQiOjE3MjM2NDYwMjB9.FD4vjPomuKusPdyWlMRcOgbzUhGC7kyliw6My6HFrQzdAcKGC6N_BW-Cg4pHAX4f2O4EhFn5WJr-uB2UaZOHlQ",
-    "format": "JWT",
-    "credential": {
-      "credentialSubject": [
+    "issuerDid": "$EONAX_DID_WEB",
+    "holderPid": "$DID_WEB",
+    "credentials": [
         {
-          "id": "$DID_WEB",
-          "name": "provider",
-          "membership": {
-            "membershipType": "FullMember",
-            "since": "2023-01-01T00:00:00Z"
-          }
+            "format": "VC1_0_JWT",
+            "credentialType": "MembershipCredential"
         }
-      ],
-      "id": "31915bc8-088c-40d6-a014-7a98bcd70bcb",
-      "type": [
-        "VerifiableCredential",
-        "MembershipCredential"
-      ],
-      "issuer": {
-        "id": "did:web:eonax-authority-url:api:did",
-        "additionalProperties": {}
-      },
-      "issuanceDate": "2024-08-14T14:33:40Z",
-      "expirationDate": null,
-      "credentialStatus": [],
-      "description": null,
-      "name": null
-    }
-  }
+    ]
 }
 EOF
-)" http://localhost/ih/identity/v1alpha/participants/$DID_WEB_BASE64_URL/credentials
+)" http://localhost/ih/identity/v1alpha/participants/$DID_WEB_BASE64_URL/credentials/request
 ```
 
 ## Usage of the connector
