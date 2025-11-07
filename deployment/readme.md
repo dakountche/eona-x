@@ -164,11 +164,11 @@ EOF
 )" http://localhost/ih/identity/v1alpha/participants
 ```
 
-#### To receive EONAX membership VC
+#### To request an Eona-X Membership Verifiable Credential (VC):
 
-Contact EONAX to request for membership VC. 
+Please contact Eona-X to initiate the request for your membership VC. Eona-X will then reach out to the VC issuer who will issue the VC.
 
-Once when you get a confirmation that VC was created, call the below API to retrieve the VC.
+Once you receive confirmation from Eona-X that the VC has been successfully created, you may proceed to retrieve it by calling the API provided below.
 
 ```bash
 curl -X POST -H "Content-Type: application/json" -d "$(cat <<EOF
