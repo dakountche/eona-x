@@ -166,9 +166,9 @@ EOF
 
 #### To receive EONAX membership VC
 
-Contact EONAX to request for membership VC. 
+Contact EONAX to request for membership VC. Eonax will reach to the operator who will issue the VC. 
 
-Once when you get a confirmation that VC was created, call the below API to retrieve the VC.
+Once when you get a confirmation that VC was created from Eonax, call the below API to retrieve the VC.
 
 ```bash
 curl -X POST -H "Content-Type: application/json" -d "$(cat <<EOF
