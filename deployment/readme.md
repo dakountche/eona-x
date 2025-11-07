@@ -101,6 +101,7 @@ DID_WEB_BASE64_URL=$(echo -n "$DID_WEB" | base64 | tr '+/' '-_' | tr -d '=')
 IH_PRESENTATION_URL=http://localhost/ih/presentation
 CP_DSP_URL=http://localhost/cp/dsp
 DP_PUBLIC_URL=http://localhost/dp/public
+EONAX_DID_WEB=did:web:test.api.eona-x.dataspace-platform.amadeus.com:ih:did:authority
 ```
 
 Then create the `terraform.tfvars` file:
