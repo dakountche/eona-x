@@ -166,9 +166,9 @@ EOF
 
 #### To request an Eona-X Membership Verifiable Credential (VC):
 
-Please contact Eona-X to initiate the request for your membership VC. Eona-X will then reach out to the VC issuer who will issue the VC.
+To initiate the request for your membership Verifiable Credential (VC), please contact Eona-X with your Decentralized Identifier (DID) and participant name. Eona-X will forward both your DID and participant name to the VC issuer, who will then issue the credential.
 
-Once you receive confirmation from Eona-X that the VC has been successfully created, you may proceed to retrieve it by calling the API provided below.
+Once you receive confirmation from Eona-X that the VC has been successfully issued, you can proceed to retrieve it by calling the API provided below.
 
 ```bash
 curl -X POST -H "Content-Type: application/json" -d "$(cat <<EOF
