@@ -4,7 +4,7 @@
 
 This repository contains a modified version of the documentation and resources helping Eona-X participants to deploy and manage their Eona-X dataspace components.
 
-The EONA-X MVD is based on the Eclipse MVD. EONA-X aims to provide a dataspace for logistic, mobility, and tourism stakeholders. It is based oncreate concrete use cases.
+The EONA-X MVD is based on the Eclipse MVD. EONA-X aims to provide a dataspace for logistic, mobility, and tourism stakeholders. It is based on concrete use cases.
 
 ### From Platforms to Data Spaces 
 
@@ -34,6 +34,7 @@ The design principles of the EONA-X framework are the following[https://eona-x.e
 
 ### Prerequisite
 
+- Kubernetes cluster
 - [OpenTofu](https://opentofu.org/): A reliable, flexible, community-driven infrastructure as code tool alternative to Terraform 
 - cURL or Postman
 - Hashicorp Vault CLI
