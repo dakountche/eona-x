@@ -1,9 +1,5 @@
 # Eona-X Connector - User Manual
 
-## Eona-X platform overview
-
-![platform_overview.png](platform_overview.png)
-
 ## Prerequisites
 
 In order to complete this guide, you will need few infos that will be provided by Amadeus:
